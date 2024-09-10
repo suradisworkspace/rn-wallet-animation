@@ -61,10 +61,10 @@ const WalletItem = (props: WalletItemPropsType) => {
         Object.keys(props.positions.value).length
       );
       const newPositions = { ...props.positions.value };
+      newPositions[props.id] = newIndex;
 
       // this method for reordering
       //
-      newPositions[props.id] = newIndex;
       if (newIndex !== formerIndex) {
         Object.keys(newPositions).forEach((key) => {
           if (key !== props.id) {
@@ -80,7 +80,7 @@ const WalletItem = (props: WalletItemPropsType) => {
       // this method for swapping
       //
       // const swapWith = Object.keys(props.positions.value).find(
-      //   (key) => props.positions.value[key] === newInd
+      //   (key) => props.positions.value[key] === newIndex
       // );
       // if (swapWith) {
       //   const formerIndex = props.positions.value[props.id];
