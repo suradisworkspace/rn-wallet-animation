@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
-import { animTimingConfig, MARGIN, SIZE } from "./configs";
+import { animTimingConfig } from "./configs";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   SharedValue,
@@ -9,6 +9,9 @@ import Animated, {
   withTiming,
   useAnimatedReaction,
 } from "react-native-reanimated";
+
+import WalletBox from "@/components/WalletBox";
+
 import { getPosFromInd, getIndFromPos } from "./utils";
 import { Positions } from "./WalletList";
 
@@ -50,21 +53,40 @@ const WalletItem = (props: WalletItemPropsType) => {
     .onUpdate((event) => {
       translateX.value = prevTranslationX.value + event.translationX;
       translateY.value = prevTranslationY.value + event.translationY;
-      const newInd = getIndFromPos(
+      // get former index, new index, and dup the positions
+      const formerIndex = props.positions.value[props.id];
+      const newIndex = getIndFromPos(
         translateX.value,
         translateY.value,
         Object.keys(props.positions.value).length
       );
-      const swapWith = Object.keys(props.positions.value).find(
-        (key) => props.positions.value[key] === newInd
-      );
-      const newPos = { ...props.positions.value };
-      newPos[props.id] = newInd;
-      if (swapWith) {
-        const oldInd = props.positions.value[props.id];
-        newPos[swapWith] = oldInd;
+      const newPositions = { ...props.positions.value };
+
+      // this method for reordering
+      //
+      newPositions[props.id] = newIndex;
+      if (newIndex !== formerIndex) {
+        Object.keys(newPositions).forEach((key) => {
+          if (key !== props.id) {
+            const posVal = newPositions[key];
+            if (posVal > formerIndex && posVal <= newIndex) {
+              newPositions[key]--;
+            } else if (posVal < formerIndex && posVal >= newIndex) {
+              newPositions[key]++;
+            }
+          }
+        });
       }
-      props.positions.value = newPos;
+      // this method for swapping
+      //
+      // const swapWith = Object.keys(props.positions.value).find(
+      //   (key) => props.positions.value[key] === newInd
+      // );
+      // if (swapWith) {
+      //   const formerIndex = props.positions.value[props.id];
+      //   newPositions[swapWith] = formerIndex;
+      // }
+      props.positions.value = newPositions;
     })
     .onEnd(() => {
       isDrag.value = false;
@@ -92,31 +114,10 @@ const WalletItem = (props: WalletItemPropsType) => {
   return (
     <Animated.View style={itemStyle}>
       <GestureDetector gesture={tap}>
-        <View style={styles.container}>
-          <View style={styles.itemContainer}>
-            <Text>{props.name}</Text>
-            <Text>{props.money}</Text>
-          </View>
-        </View>
+        <WalletBox id={props.id} name={props.name} money={props.money} />
       </GestureDetector>
     </Animated.View>
   );
 };
 
 export default WalletItem;
-
-const styles = StyleSheet.create({
-  container: {
-    width: SIZE,
-    height: SIZE,
-  },
-  itemContainer: {
-    flex: 1,
-    margin: MARGIN * 2,
-    borderRadius: MARGIN,
-    backgroundColor: "white",
-    borderWidth: 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

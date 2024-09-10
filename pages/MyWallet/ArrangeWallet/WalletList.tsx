@@ -1,18 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { ReactElement, ReactNode } from "react";
-import Animated, {
-  useSharedValue,
-  SharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { COL, SIZE, animTimingConfig } from "./configs";
-import { getPosFromInd, getIndFromPos } from "./utils";
+import { StyleSheet, View } from "react-native";
+import React from "react";
+import { useSharedValue } from "react-native-reanimated";
+import { COL, SIZE } from "./configs";
 import WalletItem from "./WalletItem";
 import { WalletType } from "./WalletItem";
 type WalletListPropsType = {
-  //   children: ReactElement<{ id: string }>[];
   list: WalletType[];
 };
 

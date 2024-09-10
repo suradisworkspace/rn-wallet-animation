@@ -1,9 +1,9 @@
-import { COL, SIZE, MARGIN } from "./configs";
+import { COL, SIZE } from "./configs";
 
 export const getPosFromInd = (ind: number) => {
   "worklet";
   return {
-    x: (ind % COL) * SIZE + MARGIN,
+    x: (ind % COL) * SIZE,
     y: Math.floor(ind / COL) * SIZE,
   };
 };
